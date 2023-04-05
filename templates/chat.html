@@ -19,10 +19,13 @@
   </head>
   <body>
     <div id="mensajes"></div>
-    <h3>Group or User name</h3>
+    <div>
+      <% if (user) { %>
+        <h3><%= user.username %></h3>
+      <% } %>
+    </div>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id = “nombre” class=”form-control” placeholder=”Nombre”>
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
   <script src="/socket.io/socket.io.js"></script>

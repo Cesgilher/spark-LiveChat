@@ -7,6 +7,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
+    <h1>Spark Live Chat</h1>
+    <h5>Desarrollado por César Gil Hernando</h5>
     <h3>Iniciar sesión</h3>
     <div id="error-message">
       <% if (errorMessage) { %>
@@ -15,11 +17,13 @@
     </div>
     
     <form action="/login" method="post">
-        <label for="username">Ingrese su nombre de usuario</label>
+        <p>Ingrese su nombre de usuario</p>
         <input type="text" name="username" id="username">
-        <label for="password">Ingrese su contraseña</label>
+        <p>Ingrese su contraseña</p>
         <input type="password" name="password" id="password">
         <input type="submit" value="Iniciar sesión">
     </form>
+
+    <p>¿No tienes una cuenta? <a href="/register">Registrate aquí.</a></p>
   </body>
 </html>

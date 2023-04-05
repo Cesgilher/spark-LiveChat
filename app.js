@@ -35,24 +35,6 @@ mongoose.connection.on('connected', () => {
     });
 });
 
-// app.get('/mensajes', (req, res) => {
-//   Mensaje.find({},(err, mensajes)=> {
-//     res.send(mensajes);
-//   });
-// });
-// app.post('/mensajes', (req, res) => {
-//   var mensaje = new Mensaje(req.body);
-//   mensaje.save((err) =>{
-//     if(err)
-//       sendStatus(500);
-//     res.sendStatus(200);
-//   });
-// });
-
-
-// app.get('/chat', (req, res) => {
-//   res.sendFile(__dirname+'/templates/chat.html');
-// });
 app.get('/register', (req, res) => {
   delete req.session.errorMessage; // Elimina cualquier mensaje de error de sesion previo
   res.render('register', { errorMessage: req.session.errorMessage });
@@ -70,7 +52,8 @@ app.post('/register', (req, res) => {
   newUser.save()
           .then((user) => {
           console.log(user.username + ' guardado en la base de datos.');
-          res.redirect('/chats');
+          req.session.user = user;
+          res.render('chat', { user: req.session.user });
           })
           .catch((err) => {
             let errorMsg = 'Error al guardar el usuario en la base de datos. ';
@@ -114,7 +97,7 @@ app.post('/login', ( req,res) => {
       if (user.password === password) {
         console.log('Usuario autenticado');
         req.session.user = user;
-        res.redirect('/chats');
+        res.render('chat', { user: req.session.user });
       } else {
         errorMsg='Contraseña incorrecta';
         req.session.errorMessage = errorMsg;
@@ -125,7 +108,6 @@ app.post('/login', ( req,res) => {
         req.session.errorMessage = errorMsg;
         res.render('login', { errorMessage: req.session.errorMessage });     
         }
-        res.redirect('/chats');
       })
       .catch((err) => {
         console.log(err);
@@ -134,23 +116,44 @@ app.post('/login', ( req,res) => {
 });
 
 
-
-
-// io.on('connection', (socket)=>{
-//     console.log('a user connected');
-//     socket.on('disconnect', () => {
-//         console.log('user disconnected');
-//       });
-// });
-// io.on('connection', (socket) => {
-//     socket.on('chat message', (msg) => {
-//       console.log('message: ' + msg);
-//     });
-//   });
-
-// io.on('connection', (socket) => {
-//   socket.on('chat message', (msg) => {
-//     io.emit('chat message', msg);
+// app.get('/mensajes', (req, res) => {
+//   Mensaje.find({},(err, mensajes)=> {
+//     res.send(mensajes);
 //   });
 // });
-//Puerto en el que escucha el servidor
+// app.post('/mensajes', (req, res) => {
+//   var mensaje = new Mensaje(req.body);
+//   mensaje.save((err) =>{
+//     if(err)
+//       sendStatus(500);
+//     res.sendStatus(200);
+//   });
+// });
+
+
+app.get('/', (req, res) => {
+
+  if (req.session.user) {
+    res.render('chat', { user: req.session.user });
+  } else {
+    res.redirect('/login')};
+});
+
+
+io.on('connection', (socket)=>{
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+      });
+});
+io.on('connection', (socket) => {
+    socket.on('chat message', (msg) => {
+      console.log('message: ' + msg);
+    });
+  });
+
+io.on('connection', (socket) => {
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+});
