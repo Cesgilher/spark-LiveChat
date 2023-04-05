@@ -18,9 +18,11 @@
     </style>
   </head>
   <body>
+    <div id="mensajes"></div>
     <h3>Group or User name</h3>
     <ul id="messages"></ul>
     <form id="form" action="">
+      <input id = “nombre” class=”form-control” placeholder=”Nombre”>
       <input id="input" autocomplete="off" /><button>Send</button>
     </form>
   <script src="/socket.io/socket.io.js"></script>
@@ -42,6 +44,33 @@
     messages.appendChild(item);
     window.scrollTo(0, document.body.scrollHeight);
   });
+</script>
+<script>
+
+$(() => {
+    $("#enviar").click(()=>{
+       enviarMensaje({
+          nombre: $("#nombre").val(), 
+          mensaje:$("#mensaje").val()});
+        })
+      obtenerMensajes()
+    })
+    
+function agregarMensajes(mensaje){
+   $("#mensajes").append(`
+      <h4> ${mensaje.nombre} </h4>
+      <p>  ${mensaje.mensaje} </p>`)
+   }
+   
+function obtenerMensajes(){
+  $.get('http://localhost:3000/mensajes', (data) => {
+   data.forEach(agregarMensajes);
+   })
+ }
+ 
+function enviarMensaje(mensaje){
+   $.post('http://localhost:3000/mensajes', mensaje)
+ }
 </script>
   </body>
 </html>
