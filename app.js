@@ -95,20 +95,43 @@ app.post('/register', (req, res) => {
 app.post('/login', ( req,res) => {
   const username= req.body.username;
   const password= req.body.password;
+  let errorMsg = '';
+  if (!username) {
+    errorMsg='Intruduzca un nombre de usuario';
+    req.session.errorMessage = errorMsg;
+    res.render('login', { errorMessage: req.session.errorMessage });
 
-  User.findOne({username, password})
+  }
+  else if (!password) {
+    errorMsg='Introduzca una contraseña';
+    req.session.errorMessage = errorMsg;
+    res.render('login', { errorMessage: req.session.errorMessage });
+  }
+
+  User.findOne({username})
   .then((user) => {
-    console.log(`${user.username} encontrado en la base de datos.`);
-  })
-  .catch((err) => {
-    if (err.name === 'ValidationError') {
-      console.log('Error de validación: ', err.message);
+    if (user) {
+      if (user.password === password) {
+        console.log('Usuario autenticado');
+        req.session.user = user;
+        res.redirect('/chats');
+      } else {
+        errorMsg='Contraseña incorrecta';
+        req.session.errorMessage = errorMsg;
+        res.render('login', { errorMessage: req.session.errorMessage });
+      }
     } else {
-      console.log('Usuario o contraseña incorrectos.');
-    }
-  });
+        errorMsg='El usuario no existe';
+        req.session.errorMessage = errorMsg;
+        res.render('login', { errorMessage: req.session.errorMessage });     
+        }
+        res.redirect('/chats');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   
-}); 
+});
 
 
 

@@ -8,6 +8,11 @@
   </head>
   <body>
     <h3>Iniciar sesión</h3>
+    <div id="error-message">
+      <% if (errorMessage) { %>
+        <p><%= errorMessage %></p>
+      <% } %>
+    </div>
     
     <form action="/login" method="post">
         <label for="username">Ingrese su nombre de usuario</label>
