@@ -1,20 +1,34 @@
 const { default: mongoose } = require("mongoose");
 const User = require("./user");
-const Mensaje = require('./message');
+const {AddMessage} = require('./message');
+const {RetrieveMessages} = require('./message');
+const date = require('moment');
+
 
 
 //Parametros para la conexion a la base de datos de MongoDB
-mongoose.connect('mongodb://localhost:2112', {
+ mongoose.connect('mongodb://localhost:2112', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   user: 'spark',
   pass: 'spark',
   dbName: 'spark'
 });
+
+const db = mongoose.connection;
+
+module.exports = db;
+
+// db.on('connected', () => {
+//         console.log('Conexión establecida');
+// });
+
+//AddMessage('cesgiher','Hola, que tal juan?','general',date().format('DD/MM/YYYY HH:mm:ss'));
+        
+
+
 //Conexion a la base de datos de MongoDB
-mongoose.connection.on('connected', () => {
-  console.log('Conexión establecida');
-})
+
 //Creacion de un usuario de prueba
 
 // const newUser = new User({username:'cesgher',email:'cesgiher@gmail.com',password:'123456789'});
@@ -37,13 +51,13 @@ mongoose.connection.on('connected', () => {
 //           }
 //         });
 
-        User.find()
-        .then((users) => {
-            console.log(users);
-        })
-        .catch((err) => {
-            console.error(err);
-        });
+        // User.find()
+        // .then((users) => {
+        //     console.log(users);
+        // })
+        // .catch((err) => {
+        //     console.error(err);
+        // });
 //Comprovar que el usuario se ha creado correctamente
 
 // module.exports = db;
@@ -54,9 +68,9 @@ mongoose.connection.on('connected', () => {
 //         console.log('mensaje guardado en la base de datos.');
 //         })
 //         .catch((err) => {
-//           let errorMsg = 'Error al guardar el mensaje en la base de datos. ';});
-Mensaje.find()
-.then((mensajes) => {
-    console.log(mensajes);
-})
+//         let errorMsg = 'Error al guardar el mensaje en la base de datos. ';});
+// Mensaje.find()
+// .then((mensajes) => {
+//     console.log(mensajes);
+// })
 

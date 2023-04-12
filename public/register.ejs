@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Crear cuenta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+
+  </head>
+  <body>
+    <div class="join-container">
+    <header class="join-header">
+      <h1><i class="fa-solid fa-burst"></i> Spark LiveChat</h1>
+      <h5>By César Gil Hernando</h5>
+    </header>
+    <main class="join-main">
+      <form action="/register" method="post">
+        <div class="form-control">
+          <h3>Crear cuenta</h3>
+          <div id="error-message">
+            <% if (errorMessage) { %>
+              <p><%= errorMessage %></p>
+            <% } %>
+          </div>
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username" required>
+          <label for="email">Email</label>
+          <input type="email" name="email" id="email" required>
+          <label for="password">Password</label>
+          <input type="password" name="password" id="room" required>
+        </div>
+        <button type="submit" class="btn">Register</button>
+        <p>¿Ya tienes una cuenta? <a href="/login" style="color: black;">Inicia sesión</a></p>
+        
+      </form>        
+      </div>
+    
+  </body>
+</html>

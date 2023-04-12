@@ -1,15 +1,11 @@
-const mongoose = require('mongoose');
+const moment = require('moment');
 
-const mensajeSchema = new mongoose.Schema({
-  nombreUsuario: {
-    type: String,
-    required: true
-  },
-  contenido: {
-    type: String,
-    required: true
-  }
-});
+function formatMessage(username, content) {
+    return {
+        username,
+        content,
+        time: moment().format('h:mm a')
+    }
+}
 
-module.exports = mongoose.model('Mensaje', mensajeSchema);
-
+module.exports = formatMessage;
