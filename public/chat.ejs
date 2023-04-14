@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
-  <title id="roomTitle"></title>
+  <title id="roomTitle"><%= room %></title>
 </head>
 <body>
   <div class="chat-container">
@@ -15,7 +15,7 @@
     <main class="chat-main">
       <div class="chat-sidebar">
         <h3><i class="fa-solid fa-circle-nodes"></i>Room Name:</h3>
-        <h2 id="roomName"></h2>
+        <h2 id="roomName"><%= room %></h2>
         <h3><i class="fa-solid fa-people-group"></i> Users</h3>
         <ul id="users"></ul>
       </div>
@@ -34,6 +34,11 @@
       </form>
     </div>
   </div>
+  <script>
+    //send username and room to main.js
+    var username = '<%= username %>';
+    var room = '<%= room %>';
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.11.1/qs.min.js" 
     integrity="sha512-5Zv/hNtOKSkeScnIYOqGjng82gQSHsCoyqq9TgrJLgYa032cUYWH4kF1ayS8Gz1Jfge7e8MaBF6AeEvoQ92v8w=="
     crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -41,6 +46,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/main.js"></script>
   <script src="https://kit.fontawesome.com/49e0bf22cb.js" crossorigin="anonymous"></script>
+  
 
   
 </body>

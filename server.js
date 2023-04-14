@@ -72,47 +72,63 @@ io.on('connection', (socket) => {
     
 });
 
+//ROUTES
+
+//Main Page
+app.get('/', (req, res) => {
+  if (req.session.user) {
+    res.render('index', { username: req.session.user.username });
+  } else {
+    res.redirect('/login');
+}});
+app.post('/', (req, res) => {
+  room = req.body.room;
+  username=req.body.username;
+  console.log('post a /',room, username);
+  res.render('chat', { username, room });
+});
+
+//Register Page
 app.get('/register', (req, res) => {
     delete req.session.errorMessage; // Elimina cualquier mensaje de error de sesion previo
     res.render('register', { errorMessage: req.session.errorMessage });
-  });
+});
+app.post('/register', (req, res) => {
+  const username= req.body.username;
+  const email= req.body.email;
+  const password= req.body.password;
+  const newUser = new User({username,email,password});
+  newUser.save()
+          .then((user) => {
+          console.log(user.username + ' guardado en la base de datos.');
+          req.session.user = user;
+          res.render('index', { username: req.session.user.username });//send the username to index
+          })
+          .catch((err) => {
+            let errorMsg = 'Error al guardar el usuario en la base de datos. ';
+            if (err.code === 11000) {
+              // Manejar el error de clave única duplicada (username o email)
+              if (err.keyPattern.username) {
+                console.log('El nombre de usuario ya está en uso.');
+                errorMsg='El nombre de usuario ya está en uso.';                    
+              } else if (err.keyPattern.email) {
+                console.log('El correo electrónico ya está en uso.');
+                errorMsg='El correo electrónico ya está en uso.';
+              }
+              req.session.errorMessage = errorMsg;
+              res.render('register', { errorMessage: req.session.errorMessage });
+            } else {
+              // Manejar cualquier otro error
+              errorMsg += err.message;
+            }
+          });
+});
+
+//Login Page
 app.get('/login', (req, res) => {
 delete req.session.errorMessage;
 res.render('login', { errorMessage: req.session.errorMessage });
 });
-
-
-app.post('/register', (req, res) => {
-    const username= req.body.username;
-    const email= req.body.email;
-    const password= req.body.password;
-    const newUser = new User({username,email,password});
-    newUser.save()
-            .then((user) => {
-            console.log(user.username + ' guardado en la base de datos.');
-            req.session.user = user;
-            res.render('index', { username: req.session.user.username });//send the username to index
-            })
-            .catch((err) => {
-              let errorMsg = 'Error al guardar el usuario en la base de datos. ';
-              if (err.code === 11000) {
-                // Manejar el error de clave única duplicada (username o email)
-                if (err.keyPattern.username) {
-                  console.log('El nombre de usuario ya está en uso.');
-                  errorMsg='El nombre de usuario ya está en uso.';                    
-                } else if (err.keyPattern.email) {
-                  console.log('El correo electrónico ya está en uso.');
-                  errorMsg='El correo electrónico ya está en uso.';
-                }
-                req.session.errorMessage = errorMsg;
-                res.render('register', { errorMessage: req.session.errorMessage });
-              } else {
-                // Manejar cualquier otro error
-                errorMsg += err.message;
-              }
-            });
-});
-
 app.post('/login', ( req,res) => {
     const username= req.body.username;
     const password= req.body.password;
@@ -142,19 +158,15 @@ app.post('/login', ( req,res) => {
           console.log(err);
         });
     
-  });
+});
 
-app.get('/', (req, res) => {
-    console.log(req.session.user);
-    res.render('index', { user: req.session.user });
-    });
+app.get('/chat', (req, res) => {
+  res.redirect('/');
+});
+
     
-app.post('/', (req, res) => {
-    roomName = req.body.room;
-    console.log(roomName);
-    console.log(req.session.user);
-    res.render('index', { user: req.session.user });
-    });
+
+
 
 // Listen on port when connection is established to database
 db.on('connected', () => {
