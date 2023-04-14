@@ -37,18 +37,18 @@ io.on('connection', (socket) => {
     //Join User to chatRoom
     socket.on('joinRoom', ({username, room}) => {
       console.log(username, room);
-        const user = userJoin(socket.id, username, room);
-        socket.join(user.room);
-        
-        // Welcome current user
-        socket.emit('message',formatMessage(botName,'Welcome to Spark LiveChat!'));
-        // Broadcast when a user connects
-        socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
-        // Send users and room info to client in the room
-        io.to(user.room).emit('roomUsers', {
-            room: user.room,
-            users: getRoomUsers(room)
-        });        
+      const user = userJoin(socket.id, username, room);
+      socket.join(user.room);
+      
+      // Welcome current user
+      socket.emit('message',formatMessage(botName,'Welcome to Spark LiveChat!'));
+      // Broadcast when a user connects
+      socket.broadcast.to(user.room).emit('message', formatMessage(botName, `${user.username} has joined the chat`));
+      // Send users and room info to client in the room
+      io.to(user.room).emit('roomUsers', {
+          room: user.room,
+          users: getRoomUsers(room)
+      });        
     });
     // Listen for chatMessage
     socket.on('chatMessage', (msg) => {
