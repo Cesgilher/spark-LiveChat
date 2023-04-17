@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
     //Join User to chatRoom
     socket.on('joinRoom', ({username, room}) => {
       console.log(username, room);
-      const user = userJoin(socket.id, username, room);
+      const user = userJoin(socket.id, username, room);      
       socket.join(user.room);
       
       // Welcome current user
@@ -53,23 +53,26 @@ io.on('connection', (socket) => {
     // Listen for chatMessage
     socket.on('chatMessage', (msg) => {
         const user = getCurrentUser(socket.id);
-        io.to(user.room).emit('message', formatMessage(user.username, msg));
+        if (user) {
+          io.to(user.room).emit('message', formatMessage(user.username, msg));}  
 
     });
     // Runs when client disconnects
     socket.on('disconnect', () => {
+        console.log('Client disconnected');
         const user = userLeave(socket.id);
         if(user){
             io.to(user.room).emit('message', formatMessage(botName, `${user.username} has left the chat`));
-        }
-        io.to(user.room).emit('roomUsers', {
-            room: user.room,
-            users: getRoomUsers(user.room)
-        }); 
-    });
+            io.to(user.room).emit('roomUsers', {
+              room: user.room,
+              users: getRoomUsers(user.room)
+          });
+        } else {socket.emit('leaveRoom'); }
 
-    
-    
+
+        
+         
+    });
 });
 
 //ROUTES
@@ -77,15 +80,28 @@ io.on('connection', (socket) => {
 //Main Page
 app.get('/', (req, res) => {
   if (req.session.user) {
-    res.render('index', { username: req.session.user.username });
+    delete req.session.errorMessage
+    res.render('index', { username: req.session.user.username, errorMessage: req.session.errorMessage });
   } else {
     res.redirect('/login');
 }});
 app.post('/', (req, res) => {
-  room = req.body.room;
-  username=req.body.username;
-  console.log('post a /',room, username);
-  res.render('chat', { username, room });
+  const room = req.body.room;
+  const username = req.body.username;
+  const users= getRoomUsers(room);
+  
+  // Buscar si el usuario ya existe en el array
+  const existingUser = users.find(user => user.username === username);
+
+  // Si el usuario ya existe, mostrar un error
+  if (existingUser) {
+    req.session.errorMessage ='Ya esta conectado a esta sala, por favor elija otra.'
+    console.log(req.session.errorMessage)
+    res.render('index', {username, errorMessage: req.session.errorMessage });
+  } else {
+    // Si el usuario no existe, redirigir al chat
+    res.render('chat', { username, room });
+  }
 });
 
 //Register Page
@@ -102,7 +118,8 @@ app.post('/register', (req, res) => {
           .then((user) => {
           console.log(user.username + ' guardado en la base de datos.');
           req.session.user = user;
-          res.render('index', { username: req.session.user.username });//send the username to index
+          delete req.session.errorMessage;
+          res.render('index', { username: req.session.user.username, errorMessage: req.session.errorMessage  });//send the username to index
           })
           .catch((err) => {
             let errorMsg = 'Error al guardar el usuario en la base de datos. ';
@@ -141,7 +158,8 @@ app.post('/login', ( req,res) => {
           console.log('Usuario autenticado');
           req.session.user = user;
           console.log(req.session.user);
-          res.render('index', { username: req.session.user.username }); //send the username to index
+          delete req.session.errorMessage;
+          res.render('index', { username: req.session.user.username, errorMessage: req.session.errorMessage }); //send the username to index
 
         } else {
           errorMsg='Contraseña incorrecta';
