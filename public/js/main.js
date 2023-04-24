@@ -5,11 +5,8 @@ const chatMessages = document.querySelector('.chat-messages');
 const roomTitle = document.getElementById('roomTitle');
 const userList = document.getElementById('users');
 
- console.log(username, room)
-// Get username and room from URL
-// const {username, room} = Qs.parse(location.search, {
-//     ignoreQueryPrefix: true
-// });
+console.log(username, room)
+
 // Join chatroom
 socket.emit('joinRoom', {username, room});
 
