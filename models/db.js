@@ -5,13 +5,10 @@ const {RetrieveMessages} = require('./message');
 const date = require('moment');
 
 
+
 //Parametros para la conexion a la base de datos de MongoDB
- mongoose.connect('mongodb://host.docker.internal:2112', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  user: 'spark',
-  pass: 'spark',
-  dbName: 'spark'
+ mongoose.connect(`mongodb+srv://doadmin:ka5i821L0U69MH3e@mongodb-spark-cbd2512d.mongo.ondigitalocean.com/admin?tls=true&authSource=admin`, {
+
 });
 
 const db = mongoose.connection;
